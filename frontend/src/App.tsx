@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage'
 import PlayersPage from './pages/PlayersPage'
 import TeamPage from './pages/TeamPage'
 import PlayerDetailPage from './pages/PlayerDetailPage'
+import DraftRoom from './pages/DraftRoom'
 
 
 function useActivePath() {
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/players" element={<PlayersPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/player/:id" element={<PlayerDetailPage />} />
+          <Route path="/draft" element={<DraftRoom />} />
           <Route path="*" element={<div className='text-slate-500'>Not Found</div>} />
         </Routes>
       </main>
