@@ -58,13 +58,9 @@ export default function PlayerDetailPage() {
                     </button>
                     ) : (
                     <button 
-                        onClick={async () => {
-                            const added = await add(p)
-                            if (!added) {
-                                showToast(`You already have a ${p.position} selected`, 'error')
-                            } else {
-                                showToast(`Added ${p.name} to your team`, 'success')
-                            }
+                        onClick={() => {
+                            add(p)
+                            showToast(`Added ${p.name} to your team`, 'success')
                         }} 
                         className="w-full px-4 py-3 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 flex items-center justify-center gap-2"
                     >

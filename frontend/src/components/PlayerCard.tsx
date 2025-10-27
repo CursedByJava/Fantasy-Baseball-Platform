@@ -7,7 +7,7 @@ import { isPitcher } from '../context/TeamContext'
 import { useToast } from './Toast'
 
 
-export default function PlayerCard({ p, onAdd, onRemove, inTeam }: {p: Player; onAdd?: (player: Player) => Promise<boolean>; onRemove?: (id: string) => void; inTeam?: boolean}) {
+export default function PlayerCard({ p, onAdd, onRemove, inTeam }: {p: Player; onAdd?: (player: Player) => void; onRemove?: (id: string) => void; inTeam?: boolean}) {
     const navigate = useNavigate()
     const { showToast } = useToast()
     return (
@@ -54,14 +54,10 @@ export default function PlayerCard({ p, onAdd, onRemove, inTeam }: {p: Player; o
                         </button>
                         ) : (
                         <button 
-                            onClick={async () => {
+                            onClick={() => {
                                 if (!onAdd) return
-                                const added = await onAdd(p)
-                                if (!added) {
-                                    showToast(`You already have a ${p.position} selected`, 'error')
-                                } else {
-                                    showToast(`Added ${p.name} to your team`, 'success')
-                                }
+                                onAdd(p)
+                                showToast(`Added ${p.name} to your team`, 'success')
                             }} 
                             className="px-3 py-2 rounded-xl bg-emerald-600 text-white text-sm hover:bg-emerald-700 flex items-center gap-1"
                         >
