@@ -5,6 +5,7 @@ import { useToast } from '../components/Toast'
 import { PLAYERS } from '../mock/players'
 import type { Position, Player, Hitter, HitterStats } from '../types'
 import PlayerCard from '../components/PlayerCard'
+import DraftSuggestions from '../components/DraftSuggestions'
 
 
 export default function PlayersPage() {
@@ -48,23 +49,30 @@ export default function PlayersPage() {
                     </select>
                 </div>
             </div>
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {filtered.map(p => (
-                <PlayerCard 
-                    key={p.id} 
-                    p={p} 
-                    onAdd={async (player) => {
-                        const added = await add(player)
-                        if (!added) {
-                            showToast(`You already have a ${player.position} selected`, 'error')
-                        } else {
-                            showToast(`Added ${player.name} to your team`, 'success')
-                        }
-                        return added
-                    }}
-                    inTeam={!!team.find(t=>t.id===p.id)} 
-                />
-                ))}
+            <div className="grid lg:grid-cols-4 gap-4">
+                <div className="lg:col-span-3">
+                    <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4">
+                        {filtered.map(p => (
+                        <PlayerCard 
+                            key={p.id} 
+                            p={p} 
+                            onAdd={async (player) => {
+                                const added = await add(player)
+                                if (!added) {
+                                    showToast(`You already have a ${player.position} selected`, 'error')
+                                } else {
+                                    showToast(`Added ${player.name} to your team`, 'success')
+                                }
+                                return added
+                            }}
+                            inTeam={!!team.find(t=>t.id===p.id)} 
+                        />
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <DraftSuggestions />
+                </div>
             </div>
         </div>
     )
