@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
-import { useTeam } from '../context/TeamContext'
+import { useTeam, TEAM_MAX } from '../context/TeamContext'
 import { useToast } from '../components/Toast'
 import { PLAYERS } from '../mock/players'
 import type { Position, Player, Hitter, HitterStats } from '../types'
@@ -9,7 +9,7 @@ import DraftSuggestions from '../components/DraftSuggestions'
 
 
 export default function PlayersPage() {
-    const { add, team } = useTeam()
+    const { add, team, remove } = useTeam()
     const { showToast } = useToast()
     const [q, setQ] = useState('')
     const [pos, setPos] = useState<'ALL' | Position>('ALL')
@@ -57,10 +57,17 @@ export default function PlayersPage() {
                                     key={p.id} 
                                     p={p} 
                                     onAdd={(player) => {
-                                        add(player)
-                                        showToast(`Added ${player.name} to your team`, 'success')
+                                        const added = add(player)
+                                        if (added) {
+                                            showToast(`Added ${player.name} to your team`, 'success')
+                                        } else if (team.length >= TEAM_MAX) {
+                                            showToast('Your team is full', 'error')
+                                        } else if (player.position === 'C') {
+                                            showToast('You already have a catcher selected', 'error')
+                                        }
                                     }}
                                     inTeam={!!team.find(t=>t.id===p.id)} 
+                                    onRemove={remove}
                                 />
                                 ))}
                     </div>

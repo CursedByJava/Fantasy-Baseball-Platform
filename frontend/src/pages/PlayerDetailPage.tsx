@@ -59,8 +59,14 @@ export default function PlayerDetailPage() {
                     ) : (
                     <button 
                         onClick={() => {
-                            add(p)
-                            showToast(`Added ${p.name} to your team`, 'success')
+                            const added = add(p)
+                            if (added) {
+                                showToast(`Added ${p.name} to your team`, 'success')
+                            } else if (team.length >= TEAM_MAX) {
+                                showToast('Your team is full', 'error')
+                            } else if (p.position === 'C') {
+                                showToast('You already have a catcher selected', 'error')
+                            }
                         }} 
                         className="w-full px-4 py-3 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 flex items-center justify-center gap-2"
                     >
