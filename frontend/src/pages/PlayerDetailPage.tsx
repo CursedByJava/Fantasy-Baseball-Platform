@@ -8,10 +8,12 @@ import type { Player } from '../types'
 import { Plus, Trash2 } from 'lucide-react'
 import TipsCard from './TipsCard'
 import { TEAM_MAX } from '../context/TeamContext'
+import { useToast } from '../components/Toast'
 
 
 export default function PlayerDetailPage() {
-    const { add, team, remove } = useTeam()
+    const { add, team, remove, clear } = useTeam()
+    const { showToast } = useToast()
     const { id } = useParams()
     const p = useMemo<Player | undefined>(() => PLAYERS.find(x => x.id===id), [id])
     const inTeam = !!team.find(t => t.id===id)
@@ -55,11 +57,30 @@ export default function PlayerDetailPage() {
                         <Trash2 className="w-4 h-4" /> Remove from Team
                     </button>
                     ) : (
-                    <button onClick={() => add(p)} className="w-full px-4 py-3 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 flex items-center justify-center gap-2">
+                    <button 
+                        onClick={async () => {
+                            const added = await add(p)
+                            if (!added) {
+                                showToast(`You already have a ${p.position} selected`, 'error')
+                            } else {
+                                showToast(`Added ${p.name} to your team`, 'success')
+                            }
+                        }} 
+                        className="w-full px-4 py-3 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 flex items-center justify-center gap-2"
+                    >
                         <Plus className="w-4 h-4" /> Add to Team
                     </button>
                     )}
                     <p className="text-xs text-slate-500 mt-2">Team cap: {TEAM_MAX} players.</p>
+                    <button
+                        onClick={() => {
+                            if (team.length === 0) return
+                            if (window.confirm('Clear your team? This will remove all players from your roster.')) clear()
+                        }}
+                        className="w-full mt-3 px-4 py-3 rounded-xl border text-sm text-slate-700 hover:bg-slate-50"
+                    >
+                        Clear Team
+                    </button>
                 </div>
                  <TipsCard />
             </div>

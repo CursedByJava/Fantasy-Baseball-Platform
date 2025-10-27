@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
 import { useTeam } from '../context/TeamContext'
+import { useToast } from '../components/Toast'
 import { PLAYERS } from '../mock/players'
 import type { Position, Player, Hitter, HitterStats } from '../types'
 import PlayerCard from '../components/PlayerCard'
@@ -8,6 +9,7 @@ import PlayerCard from '../components/PlayerCard'
 
 export default function PlayersPage() {
     const { add, team } = useTeam()
+    const { showToast } = useToast()
     const [q, setQ] = useState('')
     const [pos, setPos] = useState<'ALL' | Position>('ALL')
     const [sort, setSort] = useState<'name'|'power'|'avg'|'k9'>('name')
@@ -48,7 +50,20 @@ export default function PlayersPage() {
             </div>
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {filtered.map(p => (
-                <PlayerCard key={p.id} p={p} onAdd={add} inTeam={!!team.find(t=>t.id===p.id)} />
+                <PlayerCard 
+                    key={p.id} 
+                    p={p} 
+                    onAdd={async (player) => {
+                        const added = await add(player)
+                        if (!added) {
+                            showToast(`You already have a ${player.position} selected`, 'error')
+                        } else {
+                            showToast(`Added ${player.name} to your team`, 'success')
+                        }
+                        return added
+                    }}
+                    inTeam={!!team.find(t=>t.id===p.id)} 
+                />
                 ))}
             </div>
         </div>

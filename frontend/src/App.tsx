@@ -1,6 +1,7 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { Home as HomeIcon } from 'lucide-react'
 import { TeamProvider } from './context/TeamContext'
+import { ToastProvider } from './components/Toast'
 import HomePage from './pages/HomePage'
 import PlayersPage from './pages/PlayersPage'
 import TeamPage from './pages/TeamPage'
@@ -21,7 +22,7 @@ function Nav() {
     <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-semibold">
-        <HomeIcon className="w-5 h-5" /> FantasyBase ⚾️
+        <HomeIcon className="w-5 h-5" /> MLD ENTERPRISES
         </Link>
         <nav className="flex items-center gap-2">
           <Link to="/players" className={linkClass('/players')}>Players</Link>
@@ -37,6 +38,7 @@ function Nav() {
 export default function App() {
   return (
     <TeamProvider>
+    <ToastProvider>
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <Nav />
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
@@ -51,6 +53,7 @@ export default function App() {
       </main>
       <footer className="py-8 text-center text-xs text-slate-500">Will Terry 2025</footer>
     </div>
+    </ToastProvider>
     </TeamProvider>
   )
 }

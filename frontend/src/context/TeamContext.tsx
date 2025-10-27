@@ -7,7 +7,7 @@ const TEAM_MAX = 10 as const
 
 export interface TeamContextValue {
     team: Player[]
-    add: (player: Player) => void
+    add: (player: Player) => Promise<boolean>
     remove: (id: string) => void
     clear: () => void
     totals: TeamTotals
@@ -38,7 +38,19 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     const [team, setTeam] = useLocalStorage<Player[]>('fantasy-team', [])
 
 
-    const add = (player: Player) => setTeam(t => (t.find(p => p.id===player.id) || t.length>=TEAM_MAX) ? t : [...t, player])
+    const add = async (player: Player) => {
+        // Check if player is already in team
+        if (team.find(p => p.id === player.id)) return false
+        
+        // Check if team is full
+        if (team.length >= TEAM_MAX) return false
+        
+        // Check if position is already taken
+        if (team.find(p => p.position === player.position)) return false
+        
+        setTeam(t => [...t, player])
+        return true
+    }
     const remove = (id: string) => setTeam(t => t.filter(p => p.id!==id))
     const clear = () => setTeam([])
 

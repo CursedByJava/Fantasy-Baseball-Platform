@@ -4,10 +4,12 @@ import { Badge, Stat, Avatar } from './UI'
 import { HitterRadar, PitcherBars } from './Charts'
 import type { Player } from '../types'
 import { isPitcher } from '../context/TeamContext'
+import { useToast } from './Toast'
 
 
-export default function PlayerCard({ p, onAdd, onRemove, inTeam }: {p: Player; onAdd?: (player: Player) => void; onRemove?: (id: string) => void; inTeam?: boolean}) {
+export default function PlayerCard({ p, onAdd, onRemove, inTeam }: {p: Player; onAdd?: (player: Player) => Promise<boolean>; onRemove?: (id: string) => void; inTeam?: boolean}) {
     const navigate = useNavigate()
+    const { showToast } = useToast()
     return (
         <div className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-all">
             <div className="flex items-start gap-3">
@@ -51,7 +53,18 @@ export default function PlayerCard({ p, onAdd, onRemove, inTeam }: {p: Player; o
                             <Trash2 className="w-4 h-4" /> Remove
                         </button>
                         ) : (
-                        <button onClick={() => onAdd?.(p)} className="px-3 py-2 rounded-xl bg-emerald-600 text-white text-sm hover:bg-emerald-700 flex items-center gap-1">
+                        <button 
+                            onClick={async () => {
+                                if (!onAdd) return
+                                const added = await onAdd(p)
+                                if (!added) {
+                                    showToast(`You already have a ${p.position} selected`, 'error')
+                                } else {
+                                    showToast(`Added ${p.name} to your team`, 'success')
+                                }
+                            }} 
+                            className="px-3 py-2 rounded-xl bg-emerald-600 text-white text-sm hover:bg-emerald-700 flex items-center gap-1"
+                        >
                             <Plus className="w-4 h-4" /> Add to Team
                         </button>
                         )}
