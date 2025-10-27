@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
 import { useTeam, TEAM_MAX } from '../context/TeamContext'
 import { useToast } from '../components/Toast'
-import { PLAYERS } from '../mock/players'
+//import { PLAYERS } from '../mock/players'
 import type { Position, Player, Hitter, HitterStats } from '../types'
 import PlayerCard from '../components/PlayerCard'
 import DraftSuggestions from '../components/DraftSuggestions'
+import { loadPlayers } from '../mock/fetchPlayers'
 
 
 export default function PlayersPage() {
@@ -14,10 +15,15 @@ export default function PlayersPage() {
     const [q, setQ] = useState('')
     const [pos, setPos] = useState<'ALL' | Position>('ALL')
     const [sort, setSort] = useState<'name'|'power'|'avg'|'k9'>('name')
+    const [players, setPlayers] = useState<Player[]>([]);
+    useEffect(() => { loadPlayers().then(setPlayers); }, []);
+
+    console.log(players)
 
 
     const filtered = useMemo(() => {
-    let list = PLAYERS
+    //let list = PLAYERS
+    let list = players
     if (pos !== 'ALL') list = list.filter(p => p.position === pos)
     if (q) list = list.filter(p => p.name.toLowerCase().includes(q.toLowerCase()))
     const sorter: Record<typeof sort, (a: Player, b: Player)=>number> = {
@@ -27,7 +33,7 @@ export default function PlayersPage() {
         k9: (a,b) => ((('k9' in a.stats ? (a as any).stats.k9 : 0) < ('k9' in b.stats ? (b as any).stats.k9 : 0)) ? 1 : -1),
     }
     return [...list].sort(sorter[sort])
-        }, [q, pos, sort])
+        }, [players, q, pos, sort])
 
 
     return (
